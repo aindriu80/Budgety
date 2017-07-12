@@ -206,6 +206,13 @@ var UIController = (function() {
              return (type === 'exp' ? '-' : '+') + ' ' + int + '.'+ dec;
 
         };
+            
+              var nodeListForEach = function(list, callback){
+                for (var i = 0; i <list.length; i++){
+                    callback(list[i], i);
+                }
+            };
+
 
     return {
         getInput: function(){
@@ -273,12 +280,7 @@ var UIController = (function() {
             
             var fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
             
-            var nodeListForEach = function(list, callback){
-                for (var i = 0; i <list.length; i++){
-                    callback(list[i], i);
-                }
-            };
-
+          
             nodeListForEach(fields, function(current, index){
                 
                 if (percentages[index] > 0) {
@@ -300,6 +302,17 @@ var UIController = (function() {
             document.querySelector(DOMstrings.dateLabel).textContent = months[month]+ ' ' + year;
         },
         
+        changedType: function(){
+            var fields = document.querySelectorAll(
+                DOMstrings.inputType + ',' +
+                DOMstrings.inputDescription + ',' +
+                DOMstrings.inputValue);
+
+            nodeListForEach(fields, function(cur){
+                cur.classList.toggle('red-focus');
+            });         
+            document.querySelector(DOMstrings.inputBtn).classList.toggle('red');
+        },
 
         getDOMstrings: function(){
             return DOMstrings;
@@ -323,6 +336,8 @@ var controller = (function(budgetCtrl, UICtrl){
         });
 
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+
+        document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
     };
 
   var updateBudget = function(){
@@ -358,7 +373,7 @@ var controller = (function(budgetCtrl, UICtrl){
 
        // 1. Get the filled input data
        var input = UICtrl.getInput();
-       console.log(input);
+       //console.log(input);
        if (input.description !== "" && !isNaN(input.value) && input.value > 0){
        
        // 2. Get the item to the budget controller
@@ -410,7 +425,7 @@ var controller = (function(budgetCtrl, UICtrl){
     
     return {
         init: function() {
-            console.log('Application has started.');
+           // console.log('Application has started.');
             UICtrl.displayMonth();
              UICtrl.displayBudget({
                 budget: 0,
